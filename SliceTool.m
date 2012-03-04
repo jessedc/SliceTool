@@ -110,12 +110,12 @@ int slice_files_at_path(NSString *sub_path)
       
       int sizes = 4;
       
-      slice_image(originalImage, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%d", powf(2, sizes - 1)]);
+      slice_image(originalImage, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%0.0f", powf(2, sizes - 1)]);
       
       for (int i = 1; i < sizes; i++)
       {
         NSImage *image = [originalImage imageScaledToFitSize:NSMakeSize(originalImage.size.width / powf(2, (float)i), originalImage.size.height/2)];
-        slice_image(image, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%d", powf(2, i)]);
+        slice_image(image, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%0.0f", powf(2, i)]);
       }
 
       [originalImage release];
