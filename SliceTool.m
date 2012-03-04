@@ -146,16 +146,15 @@ int start_slicing(NSString *path)
     NSString *sub_path = [path stringByAppendingPathComponent:subdir];
     slice_files_at_path(sub_path);
     
-    NSString *productID = [subdir substringFromIndex:[subdir length] - 5];
-    NSString *newDirName = [NSString stringWithFormat:@"product_%@_large", productID];
-    NSString *newPath = [path stringByAppendingPathComponent:newDirName];
-    
-    if (![fileManager moveItemAtPath:sub_path toPath:newPath error:&error])
-    {
-      error_output(@"moveItemAtPath: \"%@\" toPath: \"%@\" error: %@", sub_path, newPath, error);
-    }
+//    NSString *productID = [subdir substringFromIndex:[subdir length] - 5];
+//    NSString *newDirName = [NSString stringWithFormat:@"product_%@_large", productID];
+//    NSString *newPath = [path stringByAppendingPathComponent:newDirName];
+//    if (![fileManager moveItemAtPath:sub_path toPath:newPath error:&error])
+//    {
+//      error_output(@"moveItemAtPath: \"%@\" toPath: \"%@\" error: %@", sub_path, newPath, error);
+//    }
 
-    output(@"%@ <- %@", newPath, sub_path);
+    output(@"Processed %@", sub_path);
   }
 
   return 0;
