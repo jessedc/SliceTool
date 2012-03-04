@@ -32,7 +32,7 @@
 #import "NSImage+MGCropExtensions.h"
 #import "util.h"
 
-static const char *version = "1.0";
+static const char *version = "1.1";
 
 #define kTileSize 512.0f
 
@@ -43,21 +43,18 @@ void slice_image(NSImage *image, NSColorSpace *colorSpace, NSString *filename, N
 {
   @autoreleasepool
   {
-    NSUInteger imageNum = 0;
-    
+    NSUInteger row = 0, col = 0;
     for (CGFloat y = 0.0f; y<image.size.height; y += kTileSize)
     {
       for (CGFloat x = 0.0f; x<image.size.width; x += kTileSize)
-      {
-        imageNum++;
-        
+      { 
         CGFloat width = fmin(kTileSize, image.size.width - x);
         CGFloat height = fmin(kTileSize, image.size.height - y);
         
         NSRect cropRect = NSMakeRect(x, fmax(0.0f, image.size.height - (y + kTileSize)), width, height);
         NSImage *cropped = [image imageCroppedInRect:cropRect];
         
-        NSString *outputName = [NSString stringWithFormat:@"%@_%@_%02d.jpg", filename, sliceName, imageNum];
+        NSString *outputName = [NSString stringWithFormat:@"%@_%@_%02d_%02d.png", filename, sliceName, row, col];
         NSString *outputFile = [sub_path stringByAppendingPathComponent:outputName];
         NSData *tiffData = [cropped TIFFRepresentation];
         
@@ -65,7 +62,9 @@ void slice_image(NSImage *image, NSColorSpace *colorSpace, NSString *filename, N
                                             bitmapImageRepByConvertingToColorSpace:colorSpace renderingIntent:NSColorRenderingIntentDefault];
 
         [[bitmapImageRep representationUsingType:NSPNGFileType properties:nil] writeToFile:outputFile atomically:YES];
+        col++;
       }
+      row++;
     }
     
   }
@@ -109,15 +108,16 @@ int slice_files_at_path(NSString *sub_path)
         error_output(@"createDirectoryAtPath:\"%@\" error: %@", slicedPath, error);
       }
       
-      slice_image(originalImage, origColorSpace, slicedName, slicedPath, @"4000");
+      int sizes = 4;
       
-      //resize image
-      NSImage *halfImage = [originalImage imageScaledToFitSize:NSMakeSize(originalImage.size.width/2, originalImage.size.height/2)];
-      slice_image(halfImage, origColorSpace, slicedName, slicedPath, @"2000");
+      slice_image(originalImage, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%d", powf(2, sizes - 1)]);
       
-      NSImage *qtrImage = [originalImage imageScaledToFitSize:NSMakeSize(originalImage.size.width/4, originalImage.size.height/4)];
-      slice_image(qtrImage, origColorSpace, slicedName, slicedPath, @"1000");
-      
+      for (int i = 1; i < sizes; i++)
+      {
+        NSImage *image = [originalImage imageScaledToFitSize:NSMakeSize(originalImage.size.width / powf(2, (float)i), originalImage.size.height/2)];
+        slice_image(image, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%d", powf(2, i)]);
+      }
+
       [originalImage release];
     }
   }
