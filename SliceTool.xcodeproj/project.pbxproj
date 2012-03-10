@@ -59,7 +59,7 @@
 			children = (
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859EA2029092E104C91782 /* Documentation */,
-				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
+				08FB779DFE84155DC02AAC07 /* Frameworks */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
 			name = SliceTool;
@@ -68,23 +68,23 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				32A70AAB03705E1F00C91783 /* SliceTool_Prefix.pch */,
 				83B26D571331E2610058686B /* NSImage+MGCropExtensions.h */,
 				83B26D581331E2610058686B /* NSImage+MGCropExtensions.m */,
 				83B26BB91331DE0C0058686B /* util.h */,
 				83B26BBA1331DE0C0058686B /* util.m */,
-				32A70AAB03705E1F00C91783 /* SliceTool_Prefix.pch */,
 				08FB7796FE84155DC02AAC07 /* SliceTool.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
 		};
-		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
+		08FB779DFE84155DC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				83B26C781331E1DB0058686B /* AppKit.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
-			name = "External Frameworks and Libraries";
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
