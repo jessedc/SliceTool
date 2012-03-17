@@ -34,7 +34,7 @@
 
 static const char *version = "1.1";
 
-#define kTileSize 512.0f
+#define kTileSize 256.0f
 
 extern BOOL enable_verbose_output;
 extern BOOL enable_debug_output;
@@ -44,9 +44,10 @@ void slice_image(NSImage *image, NSColorSpace *colorSpace, NSString *filename, N
   @autoreleasepool
   {
     NSUInteger row = 0, col = 0;
-    for (CGFloat y = 0.0f; y<image.size.height; y += kTileSize)
+    for (CGFloat y = 0.0f; y < image.size.height; y += kTileSize)
     {
-      for (CGFloat x = 0.0f; x<image.size.width; x += kTileSize)
+      col = 0;
+      for (CGFloat x = 0.0f; x < image.size.width; x += kTileSize)
       { 
         CGFloat width = fmin(kTileSize, image.size.width - x);
         CGFloat height = fmin(kTileSize, image.size.height - y);
@@ -86,14 +87,18 @@ int slice_files_at_path(NSString *sub_path)
     
     for (NSString *filename in dirlist)
     {
-      if ([filename hasPrefix:@"."])
+      BOOL isDirectory;
+      
+      NSString *filePath = [sub_path stringByAppendingPathComponent:filename];
+      [fileManager fileExistsAtPath:filePath isDirectory:&isDirectory];
+
+      if ([filename hasPrefix:@"."] || isDirectory)
       {
         continue;
       }
       
       output(@"  * %@", filename);
       
-      NSString *filePath = [sub_path stringByAppendingPathComponent:filename];
       NSImage *originalImage = [[NSImage alloc] initWithContentsOfFile:filePath];
       
       NSBitmapImageRep *bitmapImageRep = [NSBitmapImageRep imageRepWithData:[originalImage TIFFRepresentation]];
@@ -107,19 +112,21 @@ int slice_files_at_path(NSString *sub_path)
       {
         error_output(@"createDirectoryAtPath:\"%@\" error: %@", slicedPath, error);
       }
-      
-      int sizes = 4;
-      
-      slice_image(originalImage, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%0.0f", powf(2, sizes - 1)]);
-      
-      for (int i = 1; i < sizes; i++)
-      {
-        NSImage *image = [originalImage imageScaledToFitSize:NSMakeSize(originalImage.size.width / powf(2, (float)i), originalImage.size.height/2)];
-        slice_image(image, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%0.0f", powf(2, i)]);
-      }
 
+      int sizes = 3;
+      
+      for (int i = sizes; i >= 0; i--)
+      {
+        float factor = powf(2, (float)i);
+        float inverse_factor = powf(2,(sizes - (float)i));
+        NSSize newSize = NSMakeSize(originalImage.size.width / inverse_factor, originalImage.size.height / inverse_factor);
+
+        NSImage *image = [originalImage imageScaledToFitSize:newSize];
+        slice_image(image, origColorSpace, slicedName, slicedPath, [NSString stringWithFormat:@"%0.0fx", factor]);
+      }
       [originalImage release];
     }
+
   }
 
   return 0;
