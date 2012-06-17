@@ -55,7 +55,7 @@ void slice_image(NSImage *image, NSColorSpace *colorSpace, NSString *filename, N
         NSRect cropRect = NSMakeRect(x, fmax(0.0f, image.size.height - (y + kTileSize)), width, height);
         NSImage *cropped = [image imageCroppedInRect:cropRect];
         
-        NSString *outputName = [NSString stringWithFormat:@"%@_%@_%02d_%02d.png", filename, sliceName, row, col];
+        NSString *outputName = [NSString stringWithFormat:@"%@_%@_%02ld_%02ld.png", filename, sliceName, row, col];
         NSString *outputFile = [sub_path stringByAppendingPathComponent:outputName];
         NSData *tiffData = [cropped TIFFRepresentation];
         
